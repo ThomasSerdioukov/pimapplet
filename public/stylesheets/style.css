@@ -1,0 +1,318 @@
+#topleft{
+  float: left;
+ }
+ 
+ 
+ #main{
+  clear: left;
+ }
+
+ .bands-output {
+  border: 2px #A93226 solid;
+  width: 392px;
+  background-color: white;
+  text-align: center;
+ }
+ 
+ .custom-file-upload {
+     border: 2px #A93226 solid; 
+   border-radius: 2px;
+     display: inline-block;
+     padding: 3px 4px;
+     cursor: pointer;
+   background-color: #17202A;
+   color: white;
+   text-shadow:
+     -1px -1px 0 #A93226,
+     1px -1px 0 #A93226,
+     -1px 1px 0 #A93226,
+     1px 1px 0 #A93226;  
+   width: 250px;
+ }
+ .grid {
+   display: grid;
+   height: 800px;
+   grid-template-columns: fit-content(1000px) fit-content(500px);
+   grid-gap: 5px;
+   grid-row-gap: 5px;
+ 
+ 
+   background-color: #cccccc;
+   padding: 1px;
+   grid-auto-rows: auto
+ 
+ }
+ div label input {
+   margin-right:100px;
+ }
+ body {
+    font-family:sans-serif;
+    background-color: #E5E8E8
+ }
+ 
+ 
+ #ck-button {
+    margin:5px;
+    background-color:#EFEFEF;
+    border:1px solid #D0D0D0;
+    overflow:auto;
+    float:left;
+    padding: 0;
+    width: 120px;
+ }
+ 
+ #ck-button label {
+    float:left;
+    width:110px;
+    padding: 0;
+ }
+ 
+ #ck-button label span {
+   text-align:center;
+   display:block;
+ }
+ 
+ #ck-button label input {
+    position:relative;
+    top: -5px;
+ }
+ 
+ #ck-button input:checked + span {
+ 
+ }
+ 
+ 
+ 
+ 
+ /*---------------------------------*/
+ /*Button*/
+ 
+ /*---------------------------------*/
+ #button {
+   background-color: #C0392B;
+   font-size: 12pt;
+   font-family: sans-serif;
+   margin-top: 1px;
+   margin-right: 2px;
+   position:absolute;
+   text-align: center;
+   color: white;
+   border-radius: 2px;
+   width: 250px;
+ }
+ 
+ /*---------------------------------*/
+ /*Grid*/
+ /*---------------------------------*/
+ .grid-container { 
+   height: 800px;
+ 
+   display: grid;
+   grid-template-columns: px 1fr 2fr;
+   grid-auto-rows: 100px;
+   background-color:#1C2833;
+   color: #C0392B;
+ }
+ .box{
+   color: #17202A;
+   background-color:#1C2833;
+   
+ }
+ 
+ .box1 {
+   grid-column-start: 1;
+   grid-column-end: 4;
+   grid-row-start: 1;
+   grid-row-end: 1;
+   background-color:#1C2833;
+ 
+ }
+ 
+ .box2 {
+   grid-column-start: 4;
+   grid-column-end: 7;
+ }
+ 
+ .box3 {
+   grid-column-start: 1;
+   grid-column-end: 3;
+   grid-row-start: 2;
+   grid-row-end: 2;
+ }
+ 
+ .box4 {
+   grid-column-start: 1;
+   grid-column-end: 8;
+   grid-row-start: 3;
+   grid-row-end: 3;
+ }
+ .box5 {
+   grid-column-start: 1;
+   grid-column-end: 6;
+   grid-row-start: 4;
+   grid-row-end: 4;
+ }
+ .box6 {
+   grid-column-start: 6;
+   grid-column-end: 7;
+   grid-row-start: 4;
+   grid-row-end: 4;
+ }
+ .box7 {
+   grid-column-start: 1;
+   grid-column-end: 2;
+   grid-row-start: 5;
+   grid-row-end: 5;
+ }
+ .box8 {
+   grid-column-start: 2;
+   grid-column-end: 5;
+   grid-row-start: 5;
+   grid-row-end: 5;
+ }
+ .box9 {
+   grid-column-start: 1;
+   grid-column-end: 4;
+   grid-row-start: 6;
+   grid-row-end: 6;
+ }
+ /*---------------------------------*/
+ /*Borders*/
+ /*---------------------------------*/
+ fieldset.scheduler-border {
+   border: 2px #C0392B solid;
+   border-radius: 3px;
+   padding: 0 1.4em 1.4em 1.4em !important;
+   margin: 0 0 1.5em 0 !important;
+   background-color: #566573 ;
+ }
+ 
+ fieldset.scheduler-border-3{
+   border: 2px #C0392B solid;
+   border-radius: 3px;
+ 
+   padding: 0 1.4em 1.4em 1.4em !important;
+   margin: 0px 0 1.5em 0 !important;
+   background-color: #566573 ;
+ }
+ 
+   legend.scheduler-border {
+     border: 2px #C0392B solid;
+     border-radius: 3px;
+       font-size: .8em !important;
+       text-align: left !important;
+     color: white;
+       width:auto;
+       padding: 3px 10px;
+       outline-width: 3px;
+       background-color: #566573 
+   }
+ /*---------------------------------*/
+ /*---------------------------------*/
+ .ml-5
+ {
+   margin-left: 10px !important;
+ }
+ .mr-5
+ {
+   margin-right: 20px !important;
+ }
+ 
+ .btn {
+   width: 50px;
+   height: 30px;
+ }
+ /*Tab Buttons*/
+ /*---------------------------------*/
+ .tabs__button
+ {
+   display: inline;
+   
+ }
+ 
+ .tabs__button:active{
+   background: #eeeeee;
+ }
+ 
+ .tabs__button--active
+ {
+   font-weight: bold;
+ }
+ 
+ .tabs__content
+ {
+   display: none;
+   background-color:#1C2833;
+ }
+ 
+ .tabs__content--active
+ {
+   display: block;
+   background-color:#1C2833;
+ }
+ /*---------------------------------*/
+ /*custom select box test*/
+ /* The container must be positioned relative: */
+ .custom-select {
+   position: relative;
+   font-family: sans-serif;
+   border-radius: 3px;
+   
+ }
+ 
+ .custom-select select {
+   display: none; /*hide original SELECT element: */
+ }
+ 
+ .select-selected {
+   background-color: #C0392B;
+   
+ }
+ 
+ /* Style the arrow inside the select element: */
+ .select-selected:after {
+   position: absolute;
+   content: "";
+   top: 14px;
+   right: 13px;
+   width: 0;
+   height: 0;
+   border: 6px solid transparent;
+   border-color: #fff transparent transparent transparent;
+   border-radius: 5px;
+ }
+ 
+ /* Point the arrow upwards when the select box is open (active): */
+ .select-selected.select-arrow-active:after {
+   border-color: transparent transparent #fff transparent;
+   top: 7px;
+ }
+ 
+ /* style the items (options), including the selected item: */
+ .select-items div,.select-selected {
+   color: #ffffff;
+   padding: 4px 8px;
+   border: 1px solid transparent;
+   border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
+   cursor: pointer;
+   border-radius: 2px;
+ }
+ 
+ /* Style items (options): */
+ .select-items {
+   position: absolute;
+   background-color: #A93226;
+   top: 100%;
+   left: 0;
+   right: 0;
+   z-index: 99;
+ }
+ 
+ /* Hide the items when the select box is closed: */
+ .select-hide {
+   display: none;
+ }
+ 
+ .select-items div:hover, .same-as-selected {
+   background-color: rgba(0, 0, 0, 0.1);
+ }

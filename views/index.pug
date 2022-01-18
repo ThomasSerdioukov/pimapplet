@@ -1,0 +1,431 @@
+extends layout
+
+block content
+  p Welcome to #{title}
+  <select id="tier2List" onchange="addTier4List()">
+    <option value="Select Tier 2 Region:">Select Tier 2 Region:</option>
+  </select>
+  <select id="tier4List" onchange="addHoldingTab(this.value)"></select>
+  <button onclick="doMath()">Calculate PIM</button>
+
+  <div class ="bands-output">
+    <label id = "output"><b>Default Output Text</b>
+    </label>
+  </div>
+  
+  <div class="tabs__content tabs__content--active" data-tab="1" id="main">
+    <div class="grid-container">
+        <div class = "box">
+        </div>
+    </div>
+  </div>
+  
+  <template id="group_template">
+        <div class=box1>
+            <fieldset class="scheduler-border">
+                <legend id="legend-title" class="scheduler-border"></legend>
+                <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-group" id="uplink/downlink" data-toggle="buttons">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+  </template>
+
+  <template id="checkgroups">
+        <div id="ck-button">
+            <label id="label">
+            </label>
+        </div>
+  </template>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+  script.
+  
+    var band = !{JSON.stringify(dband)};
+    var tier = !{JSON.stringify(dtier)};
+    var holding = !{JSON.stringify(dholding)};
+    var tierDict = {};
+    var holdingDict = {};
+    addTier2List();
+    addHoldingDict();
+
+    function addTier2List() {
+      var tier2ID=document.getElementById('tier2List')
+      // Loop over the sitelist array.
+      tier.forEach(function(item) {
+        tier2name=item['Tier 2 Area Name'];
+        tier4name=item['Tier 4 Area Name'];
+        if(tier2name!=null) {
+          if (tier2name in tierDict) {
+            //append tier 4 name
+            tierDict[tier2name].push(tier4name);
+          } else {
+            // Create a new <option> element.
+            var option = document.createElement('option');
+            option.value = item['Tier 2 Area Name'];
+            option.innerHTML  = item['Tier 2 Area Name'];
+            tier2ID.appendChild(option);
+            //create tier2 dictionary key
+            tierDict[tier2name]=[tier4name];
+          }
+        }
+      });
+    }
+
+    function addTier4List() {
+      var tier4ID=document.getElementById('tier4List')
+      var key=document.getElementById("tier2List").value;
+      //clear dropdown box
+      tier4ID.innerHTML = '';
+      var option0 = document.createElement('option');
+      option0.value = "Select Tier 4 Region:";
+      option0.innerHTML  = "Select Tier 4 Region:";
+      tier4ID.appendChild(option0);
+      // Loop over the sitelist array.
+      tierDict[key].forEach(function(item) {
+          var option = document.createElement('option');
+          option.value = item;
+          option.innerHTML = item;
+          tier4ID.appendChild(option);
+        }
+      );
+    }
+
+    function addHoldingDict() {
+      holding.forEach(function(item) {
+        holdingDict[item['Tier 4 Area Name']]=[item['RecordID']]
+      });
+    }
+
+    function addHoldingTab(tFour) {
+      console.log(tFour);
+      // clean current spectrum holding table
+      //select the tab, clear it of all children
+      var theTab = document.getElementById("main").querySelector(".box");
+      //delete children from old tab
+      theTab.querySelectorAll('.box1').forEach(e => e.remove());
+  
+      var template = document.getElementById("group_template").content;
+      var copyHTML = document.importNode(template,true);
+      //add spectrum holding table based on the selected tier 4 region name
+      var key=document.getElementById("tier4List").value;
+      //console.log(holding);
+      //console.log(holding[holdingDict[key]]);
+      tFourHoldings = holding[holdingDict[key]];
+      //iteration and reference between tier 4 holdings and band information
+      var current_band = band[0]["Frequency Band"];
+      console.log(tFourHoldings);
+      
+      copyHTML.getElementById("legend-title").innerHTML = "Band: " + current_band +" MHZ";
+      var i = 0;
+      for (const [key, value] of Object.entries(tFourHoldings)) {
+        if (i >= 2) {
+          if (band[i-2]["Frequency Band"] != current_band){
+            theTab.appendChild(copyHTML);
+            current_band = band[i-2]["Frequency Band"];
+            console.log(current_band);
+            //reset copyHTML for next block of bands.
+            copyHTML = document.importNode(template,true);
+            copyHTML.getElementById("legend-title").innerHTML = "Band: " + current_band +" MHZ";
+          }
+          
+          
+          populateButtons(copyHTML, current_band, band[i-2], value);
+        }
+        i += 1;
+      }
+      theTab.appendChild(copyHTML);
+    }
+
+    function populateButtons(copyHTML, current_band, band, value) {
+      var buttongroup = document.getElementById("checkgroups").content;
+      var copyButtonGroup = document.importNode(buttongroup, true);
+      var input = document.createElement("input");
+      var span = document.createElement("span");
+
+      var ulRange = "UL: "+band["Start (UL)"]+"-"+band["Stop (UL)"];
+      var dlRange = "DL: "+band["Start (DL)"]+"-"+band["Stop (DL)"];
+
+      input.type = "checkbox";
+      input.value = ulRange+"\n"+dlRange;
+      input.id = input.value;
+      input.name = "UL/DL";
+      add_string = input.value;
+
+      copyButtonGroup.getElementById("label").appendChild(input);
+      copyButtonGroup.getElementById("label").appendChild(span);
+      
+      styleButtons(copyButtonGroup,value);
+
+      span.appendChild(document.createTextNode((add_string+"\n"+value) ));
+      copyHTML.querySelector("#uplink\\/downlink").appendChild(copyButtonGroup);
+    }
+
+    function styleButtons(button,isp){
+      //function to style buttons based on ISP
+      if (isp == "Rogers" || isp == "Rogers NETCO") {
+        button.getElementById("ck-button").style.backgroundColor = "#F44336"; 
+        button.getElementById("label").style.color = "#FBFCFC";
+      }
+      else if (isp == "Bell" || isp == "Bell*" || isp == "Bell NETCO") {
+        button.getElementById("ck-button").style.backgroundColor = "#0D47A1"; 
+        button.getElementById("label").style.color = "#FBFCFC ";
+      }
+      else if (isp.toUpperCase() =="TELUS" || isp == "Telus (Ottawa)/Bell(Rest of Tier)"){
+        button.getElementById("ck-button").style.backgroundColor = "#00CC00"; 
+        button.getElementById("label").style.color = "#4A235A";
+      }
+      else if (isp == "Xplornet"){
+        button.getElementById("ck-button").style.backgroundColor = "#4FC3F7";
+        button.getElementById("label").style.color = "#FBFCFC ";
+      }
+      else if (isp == "Shaw") {
+        button.getElementById("ck-button").style.backgroundColor = "#FBFCFC "; 
+        button.getElementById("label").style.color = "#3498DB";
+      }
+      else if (isp == "Eastlink") {
+        button.getElementById("ck-button").style.backgroundColor = "#FBFCFC "; 
+        button.getElementById("label").style.color = "#7B1FA2";
+      }
+      else if (isp == "ISED") {
+        button.getElementById("label").style.color = "#F44336";
+      }
+      else if (isp == "Sasktel" || isp == "SaskTel") {
+        button.getElementById("label").style.color = "#F4511E";
+      }
+      else if (isp == "Tbaytel") {
+        button.getElementById("label").style.color = "#00796B";
+      }
+      else if (isp == "Videotron") {
+        button.getElementById("label").style.color = "#FFEB3B";
+        button.getElementById("ck-button").style.backgroundColor = "Black";
+      }
+      else if (isp == "Feenix") {
+        button.getElementById("label").style.color = "#BF360C";
+      }
+      else if (isp == "Terrestar"){
+        button.getElementById("label").style.color = "#E67E22";
+      }
+
+    }
+
+
+    async function send2server() {
+      // build query parameters
+      var url=location.protocol + '//' + location.host+'/msg/'+'my query string';
+      console.log(url);
+      //send query string to server and wait for response
+      const response = await fetch(url);
+      try{
+        const res = await response;
+        console.log(res);
+      }
+      catch(ex)
+      {
+        console.log("no response");
+      }
+    }
+
+    function doMath() {
+      //calculate all coefficients for mixes with order 3
+      var coefs = printAllUniqueParts(3);
+      console.log(coefs);
+
+      var downlink = [];
+      var uplink = [];
+
+      $("input:checkbox[name=UL\\/DL]:checked").each(function () {
+        //breakdown
+        //downlink.push([$(this).val().substring(0, $(this).val().indexOf("-")), $(this).val().substring($(this).val().indexOf("-") + 1,)]);
+        splits = $(this).val().split(" ");
+        dl_range = splits[2];
+        downlink.push([dl_range.substring(0,dl_range.indexOf("-")) , dl_range.substring(dl_range.indexOf("-")+1,)]);
+        ul_range = splits[1].split("\n")[0];
+        uplink.push([ul_range.substring(0,ul_range.indexOf("-")) , ul_range.substring(dl_range.indexOf("-")+1,)]);
+        
+      });
+
+      var numCarriers = downlink.length;
+
+      const coefsValid = coefs.filter(myFunction);
+      function myFunction(value, index, arr) {
+        return value.length <= numCarriers;
+      }
+
+      coefsValids = coefsValid.map(addZero);
+
+      function addZero(value, index, array) {
+        if (value.length < numCarriers) {
+          var difference = numCarriers - value.length;
+          var arr = [];
+          arr.length = difference;
+          arr.fill(0);
+          return value.concat(arr);
+        }
+        return value;
+      }
+
+      const finalCoefs = coefsValids.forEach(val =>{
+        const list = val.findIndex(elem => {
+          return elem == 1;
+        })
+        console.log(list,val);
+        if (list != -1) {
+          val[list] = -1;
+        }
+      })
+      //want all permutationf of coefsValid
+      let combs = [];
+      const perm = coefsValids.forEach(permute)
+      function permute(value) {
+        permutator(value,combs);
+      }
+      //found all coefficients for each mix equation. x1F1+x2F2+x3F3+...+
+      combs = multiDimensionalUnique(combs);
+      //turn first 1 encountered to -1
+
+      //Now do Math:
+      var mixes = [];
+      for (var i=0; i<combs.length; i++){
+        var mix = [0,0];
+        for (var j = 0; j<numCarriers; j++){
+          console.log(combs[i][j], downlink[j])
+          if (combs[i][j]==-1) {
+            var a = downlink[j].reverse().map(function(x){
+              console.log(x,combs[i][j]);
+              return x * combs[i][j];
+            });
+            downlink[j].reverse();
+          }
+          else {
+            var a = downlink[j].map(function(x) {
+              console.log(x,combs[i][j]);
+              return x * combs[i][j];
+            });
+          }
+          mix = addvector(mix,a);
+        }
+        mixes.push(mix);
+      }
+      console.log("final mixes");
+      console.log(mixes);
+      //create string of overlapping bands
+      var overlap_output = "";
+      for (var indMix = 0; indMix < mixes.length; indMix ++){
+        //check if this mix falls into uplink:
+        const checkUplink = uplink.forEach(element => {
+          if (overlap2(mixes[indMix],element)==true){
+            console.log("Overlap Band = " + [Math.max(mixes[indMix][0], element[0]), Math.min(mixes[indMix][1], element[1])]);
+            overlap_output = [Math.max(mixes[indMix][0], element[0]), Math.min(mixes[indMix][1], element[1])] +" , ";
+          }
+        });
+      }
+      overlap_output = overlap_output.slice(0,-2);
+      bands_split = overlap_output.split(",");
+      empty = "";
+      console.log(bands_split);
+      for (i=0; i<bands_split.length; i++){
+        empty += i+1+". "+bands_split[i]+", ";
+      }
+      overlap_output = empty.slice(0,-2);
+      overlap_output = "Overlap Bands: "+overlap_output;
+      console.log(overlap_output);
+      document.getElementById("output").innerHTML = overlap_output;
+      document.getElementById("output").style.fontWeight = "bold";
+    }
+    //Helper Functions
+    function printAllUniqueParts(n) {
+      var p = []; // An array to store a partition
+      var k = 0; // Index of last element in a partition
+      p[k] = n; // Initialize first partition as number itself
+      var arr = []
+      // This loop first prints current partition, then generates next
+      // partition. The loop stops when the current partition has all 1s
+      while (true) {
+          getParts(p, k + 1, arr);
+
+          // Generate next partition
+
+          // Find the rightmost non-one value in p[]. Also, update the
+          // rem_val so that we know how much value can be accommodated
+          var rem_val = 0;
+          console.log(rem_val)
+          while (k >= 0 && p[k] == 1) {
+              rem_val += p[k];
+              k--;
+          }
+
+          // if k < 0, all the values are 1 so there are no more partitions
+          if (k < 0) {
+              break;
+          }
+          // Decrease the p[k] found above and adjust the rem_val
+          p[k]--;
+          rem_val++;
+          while (rem_val > p[k]) {
+              p[k + 1] = p[k];
+              rem_val = rem_val - p[k];
+              k++;
+          }
+          p[k + 1] = rem_val;
+          k++;
+      }
+      return arr;
+    }
+
+    function getParts(p, n, arr) {
+      var hold = []
+      for (i = 0; i < n; i++) {
+          hold.push(p[i])
+
+      }
+      arr.push(hold)
+      //console.log(arr)
+    }
+    function permutator(inputArr, combs) {
+      var results = combs;
+    
+      function permute(arr, memo) {
+        var cur, memo = memo || [];
+    
+        for (var i = 0; i < arr.length; i++) {
+          cur = arr.splice(i, 1);
+          if (arr.length === 0) {
+            results.push(memo.concat(cur));
+          }
+          permute(arr.slice(), memo.concat(cur));
+          arr.splice(i, 0, cur[0]);
+        }
+    
+        return results;
+      }
+  
+      return permute(inputArr);
+    }
+    function multiDimensionalUnique(arr) {
+      var uniques = [];
+      var itemsFound = {};
+      for(var i = 0, l = arr.length; i < l; i++) {
+        var stringified = JSON.stringify(arr[i]);
+        if(itemsFound[stringified]) { continue; }
+        uniques.push(arr[i]);
+        itemsFound[stringified] = true;
+      }
+      return uniques;
+    }
+
+    function addvector(a,b){
+      return a.map((e,i) => e + b[i]);
+    }
+    function overlap2(mix, range) {
+      var start1 = mix[0];
+      var start2 = range[0];
+      var end1 = mix[1];
+      var end2 = range[1];
+      var overlap = start1 < end2 && start2 < end1;
+      return overlap;
+    }
+
